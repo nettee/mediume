@@ -6,8 +6,10 @@ class Downloader:
         self.proxies = proxies
 
     def download_page(self, url, file_path):
-        r = requests.get(url, proxies=self.proxies)
-        print(r)
 
-        with open(file_path, 'w') as f:
-            print(r.text, file=f)
+        with requests.get(url, proxies=self.proxies, stream=True) as r:
+            r.raise_for_status()
+            with file_path.open('wb') as f:
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
