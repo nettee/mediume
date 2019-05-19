@@ -10,7 +10,7 @@ class Downloader:
             yaml_object = yaml.load(f, Loader=yaml.FullLoader)
         self.proxies = yaml_object['proxies']
 
-    def download_page(self, url, file_path, on_progress):
+    def download_page(self, url):
 
         with requests.get(url, proxies=self.proxies, stream=True) as r:
             r.raise_for_status()
@@ -20,16 +20,8 @@ class Downloader:
             charset = params.get('charset', 'utf-8')
             print('charset:', charset)
 
-            if 'Content-Length' in r.headers:
-                total = r.headers['Content-Length']
-            else:
-                total = None
-
-            with open(file_path, 'w') as f:
-                got = 0
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        got += len(chunk)
-                        on_progress(got, total)
-                        f.write(chunk.decode(charset))
-                on_progress(got, total, done=True)
+            data = ''
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    data += chunk.decode(charset)
+            return data
