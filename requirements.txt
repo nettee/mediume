@@ -1,2 +1,4 @@
 requests==2.22.0
 pyyaml==5.1
+python-mimeparse==1.6.0
+humanize==0.5.1
